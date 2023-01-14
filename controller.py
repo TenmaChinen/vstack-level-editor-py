@@ -44,7 +44,6 @@ class Controller:
         self.model.set_matrix_tile(row=row, col=col, tile_id=tile_idx)
 
     def on_row_speed_change(self, value, row):
-        print(f'Value : value | Row : {row}')
         self.model.set_row_speed(row=row, speed=value)
 
     def on_world_item_click(self, world_index):
@@ -59,8 +58,10 @@ class Controller:
     # [ ADDS ]
 
     def on_add_world(self):
-        self.model.create_world(name='Name')
-        self.select_world(world_index=-1)
+        name = 'New World'
+        self.model.create_world(name=name)
+        self.view.add_world_item(name=name)
+        self.view.select_world_item_edit_mode(world_index=-1)
 
     def on_add_level(self):
         self.model.create_level()
@@ -92,7 +93,7 @@ class Controller:
         self.model.load_world_data(world_index=prev_world_index)
         self.draw_world_item_views()
         self.select_world(world_index=prev_world_index)
-        # PENDING
+        # TODO - PENDING
 
     def on_level_item_delete(self, level_index):
         self.model.delete_level(level_index=level_index)
@@ -103,9 +104,9 @@ class Controller:
 
     # [ EDIT ]
 
-    def on_world_item_edited(self, world_index):
-        print('World Item Edited :', world_index)
-        # PENDING
+    def on_world_item_edited(self, world_index, world_name):
+        self.model.edit_world_name(world_index, world_name)
+        # TODO - PENDING
 
     # [ SWAPS ]
 
@@ -122,4 +123,5 @@ class Controller:
     # [ SAVE ]
 
     def on_save_data(self):
+        self.model.update_is_animated_levels()
         self.model.save_data()

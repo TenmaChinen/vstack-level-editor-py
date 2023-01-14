@@ -66,6 +66,11 @@ class EntryTriState(Entry):
     def invoke(self):
         self.__on_click_left(event=None)
 
+    def right_click(self):
+        self.__on_click_right(event=None)
+
+    def get_text(self):
+        return self.var.get()
 
     @property
     def _state(self):

@@ -39,6 +39,13 @@ class ItemWorld(Frame):
     def unselect(self):
         self.entry_tristate.set_state(state=EntryTriState.LABEL)
 
+    def right_click(self):
+        self.entry_tristate.right_click()
+
+    def get_text(self):
+        return self.entry_tristate.get_text()
+
+
     # [ Callbacks ]
 
     def __on_tristate_event(self,event, widget):

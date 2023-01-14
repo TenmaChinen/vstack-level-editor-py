@@ -1,5 +1,6 @@
 [
   {
+    "id" : "6b6a35e3-8dd9-11ed-96c0-ac2b6ed72a5c",
     "name" : "World 1",
     "levels" : [
     {
@@ -107,6 +108,7 @@
   ]
   },
     {
+    "id" : "6b6aaabc-8dd9-11ed-a82e-ac2b6ed72a5c",
     "name" : "World 2",
     "levels" : [
     ]

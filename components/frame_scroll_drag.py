@@ -136,7 +136,7 @@ class FrameScrollDrag(Frame):
             if self.selected_item and is_different:
                 self.selected_item.unselect()
             self.selected_item = widget
-            return self.on_item_event(event=event, _id=widget._id, is_different=is_different)
+            return self.on_item_event(event=event, widget=widget, is_different=is_different)
 
     # [ Methods ]
 
@@ -160,6 +160,9 @@ class FrameScrollDrag(Frame):
 
     def get_last_index(self):
         return len(self.get_children()) - 1
+
+    def get_child(self, child_index):
+        return self.get_children()[child_index]
 
     def select_item(self, child_index):
         l_children = self.get_children()

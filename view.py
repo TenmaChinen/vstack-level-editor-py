@@ -151,11 +151,11 @@ class View:
         self.fr_scroll_drag_levels.update_shadow_item()
 
     def add_world_item(self, name):
-        last_index = self.fr_scroll_drag_worlds.get_last_index()
+        last_index = self.fr_scroll_drag_worlds.get_last_index() + 1
         self.create_world_item(idx=last_index, name=name)
 
     def add_level_item(self):
-        last_index = self.fr_scroll_drag_levels.get_last_index()
+        last_index = self.fr_scroll_drag_levels.get_last_index() + 1
         self.create_level_item(idx=last_index)
 
     def get_selected_tool(self):
@@ -175,6 +175,10 @@ class View:
 
     def select_level_item(self, level_index):
         self.fr_scroll_drag_levels.select_item(child_index=level_index)
+
+    def select_world_item_edit_mode(self, world_index ):
+        item_world = self.fr_scroll_drag_worlds.get_child(child_index=world_index)
+        item_world.right_click()
 
     # [ Callbacks ]
 
@@ -206,22 +210,25 @@ class View:
         self.controller.on_row_speed_change(value=value, row=row)
         self.has_changes = True
 
-    def __on_item_world_event(self, event, _id, is_different):
+    def __on_item_world_event(self, event, widget, is_different):
+        world_id = widget._id
         if is_different and event != ItemWorld.CHANGED:
-            self.controller.on_world_item_click(world_index=_id)
+            self.controller.on_world_item_click(world_index=world_id)
 
         if event == ItemWorld.DELETE:
-            if self.dialog_confirm.show(message=f'Do you want to delete world {_id:02d}'):
-                self.controller.on_world_item_delete(world_index=_id)
+            if self.dialog_confirm.show(message=f'Do you want to delete World {world_id:02d}'):
+                self.controller.on_world_item_delete(world_index=world_id)
                 self.has_changes = True
             else:
                 return False
 
         elif event == ItemWorld.CHANGED:
-            self.controller.on_world_item_edited(world_index=_id)
+            world_name = widget.get_text()
+            self.controller.on_world_item_edited(world_index=world_id, world_name=world_name)
             self.has_changes = True
 
-    def __on_item_level_event(self, event, _id, is_different):
+    def __on_item_level_event(self, event, widget, is_different):
+        _id = widget._id
         if event == ItemLevel.CLICK:
             self.controller.on_level_item_click(level_index=_id)
         elif event == ItemLevel.DELETE:

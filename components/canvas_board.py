@@ -13,8 +13,16 @@ class CanvasBoard(Canvas):
         self.tile_size = None
         self.d_images_tk = None
 
+        self.__last_row_col = [None, None]
+
         self.on_click_tile = None
         self.on_speed_change = None
+
+        self.__set_binding()
+
+    def __set_binding(self):
+        self.bind('<Button-1>', self.__on_click_left)
+        self.bind('<B1-Motion>', self.__on_click_left_motion)
 
     def create_level(self, matrix, l_tiles_img_pil):
 
@@ -39,6 +47,8 @@ class CanvasBoard(Canvas):
         self.cols = cols
 
         d_images_tk = {}
+        d_img_row_col = {}
+
         for row, col in l_rows_cols:
             tile_idx = matrix[row][col]
             img_pil = l_tiles_img_pil[tile_idx]
@@ -48,11 +58,14 @@ class CanvasBoard(Canvas):
             pos_x = x_margin + col * tile_size
             pos_y = y_margin + row * tile_size
 
-            img_tag = self.create_image(
-                pos_x, pos_y, image=image_tk, anchor='nw')
-            self.tag_bind(img_tag, '<Button-1>', lambda e, r=row, c=col, img_tag=img_tag: self.__on_click_tile(row=r, col=c, img_tag=img_tag))
+            img_tag = self.create_image(pos_x, pos_y, image=image_tk, anchor='nw')
+            d_img_row_col[img_tag] = [row,col]
             d_images_tk[img_tag] = image_tk
 
+            # self.tag_bind(img_tag, '<Button-1>', lambda e, r=row, c=col, img_tag=img_tag: self.__on_click_tile(row=r, col=c, img_tag=img_tag))
+            # self.tag_bind(img_tag, '<B1-Motion>', lambda e, r=row, c=col, img_tag=img_tag: self.__on_click_motion_tile(row=r, col=c, img_tag=img_tag))
+
+        self.d_img_row_col = d_img_row_col
         self.d_images_tk = d_images_tk
 
     def set_callbacks(self, on_click_tile, on_row_speed_change):
@@ -78,7 +91,7 @@ class CanvasBoard(Canvas):
         font_size = self.tile_size // 2
         for row, speed in enumerate(l_speeds):
             pos_y = self.y_margin + row * self.tile_size
-            entry_integer = EntryInteger(master=self, _id=row, value=int(speed), _range=(1,10) , size=font_size)
+            entry_integer = EntryInteger(master=self, _id=row, value=int(speed), _range=(1,20) , size=font_size)
             entry_integer.set_callback(on_change=self.__on_row_speed_change)
             entry_integer.place(x=pos_x, y=pos_y, anchor='nw', height=self.tile_size, width=self.tile_size)
 
@@ -86,12 +99,27 @@ class CanvasBoard(Canvas):
         for child in self.place_slaves():
             child.destroy()
 
-
     # [ Callbacks ]
 
-    def __on_click_tile(self, row, col, img_tag):
+    def __on_click_left(self, event):
         if self.on_click_tile:
+            img_tag = self.find_closest(x=event.x, y=event.y)[0]
+            row, col = self.d_img_row_col[img_tag]
+            self.__last_row_col = [row,col]
             self.on_click_tile(row=row, col=col, img_tag=img_tag)
+
+    def __on_click_left_motion(self, event):
+        if self.on_click_tile:
+            img_tag = self.find_closest(x=event.x, y=event.y)[0]
+            row, col = self.d_img_row_col[img_tag]
+            if self.__last_row_col != [row,col]:
+                self.__last_row_col = [row,col]
+                self.on_click_tile(row=row, col=col, img_tag=img_tag)
+
+    # def __on_click_tile(self, row, col, img_tag):
+    #     if self.on_click_tile:
+    #         self.__last_row_col = [row,col]
+    #         self.on_click_tile(row=row, col=col, img_tag=img_tag)
 
     def __on_row_speed_change(self, value, _id):
         if self.on_row_speed_change:
