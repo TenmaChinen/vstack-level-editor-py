@@ -2,6 +2,7 @@ from components.frame_scroll_drag import FrameScrollDrag
 from components.dialog_tri_option import DialogTriOption
 from components.dialog_confirm import DialogConfirm
 from components.input_integer import InputInteger
+from components.frame_slider import FrameSlider
 from components.canvas_tools import CanvasTools
 from components.canvas_board import CanvasBoard
 from components.item_world import ItemWorld
@@ -53,9 +54,19 @@ class View:
     def __create_canvas_tools(self):
         canvas_tools = CanvasTools(master=self.frame_tools)
         canvas_tools.pack(side='top', fill='y', expand=True)
-        # canvas_tools.pack(side='top', fill='both', expand=True)
         canvas_tools.set_callback(callback=self.__on_select_tool)
 
+        Orientation = FrameSlider.Orientation
+        slider_hue = FrameSlider(master=self.frame_tools, _id='hue', name='H', range_= (0,359), orientation=Orientation.HORIZONTAL)
+        slider_hue.set_callback(on_change=self.__on_slider_color_filter_change)
+        slider_hue.pack(side='top', fill='x')
+        self.slider_hue = slider_hue
+        
+        slider_con = FrameSlider(master=self.frame_tools, _id='contrast', name='C', range_=(0,100), orientation=Orientation.HORIZONTAL)
+        slider_con.set_callback(on_change=self.__on_slider_color_filter_change)
+        slider_con.pack(side='top', fill='x')
+        self.slider_con = slider_con
+        
         input_integer_rows = InputInteger(master=self.frame_tools, _range=(3,20), text='ROWS')
         input_integer_rows.set_callback(callback=self.__on_input_integer_rows_event)
         input_integer_rows.pack(side='top', fill='x')
@@ -134,13 +145,20 @@ class View:
         toast.set_message(message='Saving Data')
         return toast
 
-    # [ Methods ]
+    # [ METHODS ]
 
-    def load_level_on_canvas_board(self, matrix, l_speeds, l_tiles_img_pil):
+    def load_level_on_canvas_board(self, matrix, l_speeds, color_filter, l_tiles_img_pil):
         self.canvas_board.create_level(matrix, l_tiles_img_pil)
         self.canvas_board.create_speeds(l_speeds)
+        
+        self.slider_hue.set_value(value=color_filter['hue'])
+        self.slider_con.set_value(value=color_filter['contrast'])
+
         self.input_integer_rows.set_value(value=len(matrix))
         self.input_integer_cols.set_value(value=len(matrix[0]))
+
+    def update_canvas_board_tiles_color(self, matrix, l_tiles_img_pil):
+        self.canvas_board.create_level(matrix, l_tiles_img_pil)
 
     def create_world_item(self, idx, name):
         item_world = self.fr_scroll_drag_worlds.add_item(ItemClass=ItemWorld, child_idx=0, _id=idx, text=name)
@@ -238,6 +256,10 @@ class View:
                 self.has_changes = True
                 return True
             return False
+
+    def __on_slider_color_filter_change(self, _id, value):
+        self.controller.on_color_filter_edited(key=_id, value=value)
+        self.has_changes = True
 
     # [ SWAPS ]
 

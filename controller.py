@@ -25,8 +25,14 @@ class Controller:
     def draw_level_matrix_view(self):
         matrix = self.model.get_level_matrix()
         l_speeds = self.model.get_level_speeds()
-        self.view.load_level_on_canvas_board(matrix = matrix, l_speeds=l_speeds, l_tiles_img_pil = self.model.l_tiles_img_pil)
-    
+        color_filter = self.model.get_color_filter()
+        
+        self.view.load_level_on_canvas_board(
+            matrix = matrix, l_speeds=l_speeds,
+            color_filter=color_filter,
+            l_tiles_img_pil = self.model.l_tint_tiles_img_pil)
+
+
     def select_world(self, world_index):
         self.view.select_world_item(world_index=world_index)
 
@@ -39,7 +45,7 @@ class Controller:
     
     def on_click_board_tile(self, row, col, img_tag):
         tile_idx = self.view.selected_tool_idx
-        img_pil = self.model.l_tiles_img_pil[tile_idx]
+        img_pil = self.model.l_tint_tiles_img_pil[tile_idx]
         self.view.canvas_board.change_tile(img_tag,img_pil)
         self.model.set_matrix_tile(row=row, col=col, tile_id=tile_idx)
 
@@ -48,6 +54,7 @@ class Controller:
 
     def on_world_item_click(self, world_index):
         self.model.load_world_data(world_index=world_index)
+        self.model.update_tinted_tiles_img_pil()
         self.draw_level_item_views()
         self.select_level(level_index=0)
 
@@ -106,7 +113,12 @@ class Controller:
 
     def on_world_item_edited(self, world_index, world_name):
         self.model.edit_world_name(world_index, world_name)
-        # TODO - PENDING
+
+    def on_color_filter_edited(self, key, value):
+        self.model.edit_color_filter(key=key, value=value)
+        matrix = self.model.get_level_matrix()
+        l_tiles_img_pil = self.model.l_tint_tiles_img_pil
+        self.view.update_canvas_board_tiles_color(matrix=matrix, l_tiles_img_pil=l_tiles_img_pil)
 
     # [ SWAPS ]
 

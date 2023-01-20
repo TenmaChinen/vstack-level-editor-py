@@ -62,9 +62,6 @@ class CanvasBoard(Canvas):
             d_img_row_col[img_tag] = [row,col]
             d_images_tk[img_tag] = image_tk
 
-            # self.tag_bind(img_tag, '<Button-1>', lambda e, r=row, c=col, img_tag=img_tag: self.__on_click_tile(row=r, col=c, img_tag=img_tag))
-            # self.tag_bind(img_tag, '<B1-Motion>', lambda e, r=row, c=col, img_tag=img_tag: self.__on_click_motion_tile(row=r, col=c, img_tag=img_tag))
-
         self.d_img_row_col = d_img_row_col
         self.d_images_tk = d_images_tk
 
