@@ -21,3 +21,9 @@ def load_json(path):
     data = json.load(file)
     file.close()
     return data
+
+
+def open_folder(folder_path):
+    folder_path = f'{os.getcwd()}/{folder_path}'
+    if os.path.exists(folder_path):
+        os.startfile(filepath=folder_path)

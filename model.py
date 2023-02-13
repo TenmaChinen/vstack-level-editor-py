@@ -5,6 +5,7 @@ from utils import file_manager
 from copy import deepcopy
 from PIL import Image
 
+DATA_DIR_PATH = 'assets/worlds'
 DATA_PATH = 'assets/worlds/worlds.json'
 
 
@@ -14,8 +15,8 @@ class Model:
         self.__load_levels()
         self.d_world = self.l_worlds[0]  # DEBUG
         self.d_level = self.d_world['levels'][0]  # DEBUG
-        self.__l_red_tiles_img_pil = self.__load_red_tiles_img_pil()
-        self.l_tint_tiles_img_pil = deepcopy(self.__l_red_tiles_img_pil)
+        self.__l_tiles_img_pil = self.__load_red_tiles_img_pil()
+        self.l_tint_tiles_img_pil = deepcopy(self.__l_tiles_img_pil)
         self.database_manager = DatabaseManager(l_worlds=self.l_worlds)
 
     def __load_levels(self):
@@ -25,9 +26,8 @@ class Model:
         file_path = 'assets/tiles'
 
         l_tiles_img_pil = []
-        l_tiles = 'off on wall broken_off broken_on arrow_left arrow_right'.split(' ')
+        l_tiles = 'off on wall broken_off broken_on arrow_left arrow_right portal'.split(' ')
         for idx, file_name in enumerate(l_tiles):
-
             img_pil = Image.open(f'{file_path}/{file_name}.png')
             l_tiles_img_pil.append(img_pil)
         return l_tiles_img_pil
@@ -53,8 +53,8 @@ class Model:
 
     def update_tinted_tiles_img_pil(self):
         d_color_filter = self.d_world['colorFilter']
-        for idx, img_pil in enumerate(self.__l_red_tiles_img_pil):
-            if idx == 2: continue
+        for idx, img_pil in enumerate(self.__l_tiles_img_pil):
+            if idx in [2,7]: continue
             color_matrix = cfm.create_matrix_identity()
             color_matrix = cfm.adjust_hue(color_matrix=color_matrix, degrees=d_color_filter['hue'])
             color_matrix = cfm.adjust_contrast(color_matrix=color_matrix, value=d_color_filter['contrast'])
@@ -63,7 +63,7 @@ class Model:
     def __is_level_animated(self, matrix):
         for row in matrix:
             for tile_id in row:
-                if tile_id not in [0, 1, 2]:
+                if tile_id not in [0, 1, 2]: # OFF ON WALL
                     return True
         return False
 
@@ -97,7 +97,7 @@ class Model:
     def create_level(self):
         new_id = self.database_manager.get_new_level_id(self.d_world)
         d_level = dict(
-            id=new_id, speeds=[1, 2, 3, 4, 5, 7, 9, 11, 14, 16, 18, 20],
+            id=new_id, speeds=[1, 2, 3, 4, 5, 5, 6, 6, 7, 8, 9, 10],
             isAnimated=False, matrix=[[0 for c in range(5)] for r in range(12)])
         self.d_world['levels'].append(d_level)
 
@@ -158,3 +158,8 @@ class Model:
         d_level_1 = self.d_world['levels'].pop(index_1)
         self.d_world['levels'].insert(index_1, d_level_2)
         self.d_world['levels'].insert(index_2, d_level_1)
+
+    # [ OPEN ]
+
+    def open_format_worlds_file(self):
+        file_manager.open_folder(folder_path=DATA_DIR_PATH)

@@ -137,3 +137,8 @@ class Controller:
     def on_save_data(self):
         self.model.update_is_animated_levels()
         self.model.save_data()
+
+    # [ OPEN ]
+
+    def on_open_worlds_file(self):
+        self.model.open_format_worlds_file()

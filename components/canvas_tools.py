@@ -23,7 +23,7 @@ class CanvasTools(Canvas):
         file_path = 'assets/tiles'
         row, col = 0, 0
         l_images = []
-        l_tiles = 'off on wall broken_off broken_on arrow_left arrow_right'.split(' ')
+        l_tiles = 'off on wall broken_off broken_on arrow_left arrow_right portal'.split(' ')
         for idx, file_name in enumerate(l_tiles):
             img_pil = Image.open(f'{file_path}/{file_name}.png')
             img_pil = img_pil.resize((TILE_SIZE, TILE_SIZE), Image.ANTIALIAS)

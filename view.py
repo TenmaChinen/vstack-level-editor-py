@@ -1,5 +1,6 @@
 from components.frame_scroll_drag import FrameScrollDrag
 from components.dialog_tri_option import DialogTriOption
+from components.buttons import ButtonBase, ButtonOpen
 from components.dialog_confirm import DialogConfirm
 from components.input_integer import InputInteger
 from components.frame_slider import FrameSlider
@@ -7,10 +8,9 @@ from components.canvas_tools import CanvasTools
 from components.canvas_board import CanvasBoard
 from components.item_world import ItemWorld
 from components.item_level import ItemLevel
-from components.buttons import ButtonBase
 from components.labels import LabelTitle
-from tkinter import Tk, Frame, Canvas
 from components.toast import Toast
+from tkinter import Tk, Frame
 
 
 class View:
@@ -94,6 +94,9 @@ class View:
 
         label_title = LabelTitle(master=fr_worlds, text='WORLDS')
         label_title.pack(side='top', fill='x')
+
+        btn_open = ButtonOpen(master=label_title, command=self.__on_click_open_world_file)
+        btn_open.pack(side='right')
 
         fr_scroll_drag_worlds = FrameScrollDrag(master=fr_worlds, bg='#632C2C')
         fr_scroll_drag_worlds.set_callbacks(
@@ -260,6 +263,9 @@ class View:
     def __on_slider_color_filter_change(self, _id, value):
         self.controller.on_color_filter_edited(key=_id, value=value)
         self.has_changes = True
+
+    def __on_click_open_world_file(self):
+        self.controller.on_open_worlds_file()
 
     # [ SWAPS ]
 

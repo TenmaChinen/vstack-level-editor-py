@@ -101,17 +101,19 @@ class CanvasBoard(Canvas):
     def __on_click_left(self, event):
         if self.on_click_tile:
             img_tag = self.find_closest(x=event.x, y=event.y)[0]
-            row, col = self.d_img_row_col[img_tag]
-            self.__last_row_col = [row,col]
-            self.on_click_tile(row=row, col=col, img_tag=img_tag)
+            if img_tag in self.d_img_row_col:
+                row, col = self.d_img_row_col[img_tag]
+                self.__last_row_col = [row,col]
+                self.on_click_tile(row=row, col=col, img_tag=img_tag)
 
     def __on_click_left_motion(self, event):
         if self.on_click_tile:
             img_tag = self.find_closest(x=event.x, y=event.y)[0]
-            row, col = self.d_img_row_col[img_tag]
-            if self.__last_row_col != [row,col]:
-                self.__last_row_col = [row,col]
-                self.on_click_tile(row=row, col=col, img_tag=img_tag)
+            if img_tag in self.d_img_row_col:
+                row, col = self.d_img_row_col[img_tag]
+                if self.__last_row_col != [row,col]:
+                    self.__last_row_col = [row,col]
+                    self.on_click_tile(row=row, col=col, img_tag=img_tag)
 
     # def __on_click_tile(self, row, col, img_tag):
     #     if self.on_click_tile:
